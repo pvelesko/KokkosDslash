@@ -18,6 +18,16 @@ add_library( libmg ${LIB_SRCS} )
 target_link_libraries( libmg  qdp)
 target_link_libraries( libmg )
 
+if (Kokkos_ENABLE_OPENMP)
+  message(STATUS "OpenMP Enabled in Kokkos, adding OpenMP as a link target")
+  if(OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP Found")
+    target_link_libraries( libmg OpenMP::OpenMP_CXX)
+  else()
+    message(FATAL_ERROR "OpenMP Not Found")
+  endif()
+endif()
+
 # Add include/ onto the include path
 target_include_directories( libmg PUBLIC 
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>

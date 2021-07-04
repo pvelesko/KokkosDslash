@@ -39,7 +39,8 @@ endif()
 
 # Find OpenMP for backward compatibiliy
 #find_package(OpenMP REQUIRED)
-if ( KOKKOS_ENABLE_OPENMP )
+if ( Kokkos_ENABLE_OPENMP )
+   message(STATUS "Kokkos is using OpenMP and so am I")
   find_package(OpenMP REQUIRED)
 endif()
 
