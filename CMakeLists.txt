@@ -28,6 +28,9 @@ option(MG_KOKKOS_USE_MDRANGE_DISPATCH "MDRange based parallel for" FALSE)
 
 option(MG_KOKKOS_USE_NEIGHBOR_TABLE "Should we compute neighbor index or use a table" TRUE)
 
+# Kokkos Options
+set (Kokkos_ROOT "" CACHE PATH "path to Kokkos install if you don't want to use the builtin submodule.")
+
 if( MG_USE_AVX512 )
 	message(STATUS "Using AVX512")
 endif()
@@ -37,10 +40,38 @@ if( MG_USE_AVX2 )
 	message(STATUS "Using AVX2")
 endif()
 
+if( NOT EXISTS ${Kokkos_ROOT} )
+  message(STATUS "Kokkos_ROOT was not set.. Using Kokkos submodule.")
+  message(STATUS "Make sure KokkosDlash was cloned with --recursive")
+  add_subdirectory("${PROJECT_SOURCE_DIR}/extern/kokkos" "extern/kokkos")
+else()
+  message(STATUS "Kokkos_ROOT was set to ${Kokkos_ROOT}")
+  # Use Kokkos that's already installed on the system
+  find_package(Kokkos REQUIRED PATHS "${Kokkos_ROOT}/lib/cmake/Kokkos")
+  if (Kokkos_FOUND)
+    set(Kokkos_INCLUDE "${Kokkos_ROOT}/include")
+    set(Kokkos_LIB "${Kokkos_ROOT}/lib")
+    message(STATUS "Kokkos found. Using Kokkos include ${Kokkos_INCLUDE}")
+    message(STATUS "Kokkos found. Using Kokkos libs ${Kokkos_LIB}")
+    include_directories("${Kokkos_INCLUDE}")
+  else()
+    message(FATAL_ERROR "Kokkos CMake config file not found at ${Kokkos_ROOT}/lib/cmake/Kokkos")
+  endif()
+endif()
+
+if ( Kokkos_ENABLE_SYCL )
+  message(STATUS "Kokkos SYCL backend is enabled")
+  message(STATUS "${CMAKE_CXX_COMPILER_ID}")
+  if (CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM") 
+    add_compile_options(-fsycl -fsycl-unnamed-lambda)
+  else()
+    message(FATAL_ERROR "Intel OneAPI icpx compiler must be used for Kokkos SYCL backend")
+  endif()
+endif()
+
 # Find OpenMP for backward compatibiliy
-#find_package(OpenMP REQUIRED)
 if ( Kokkos_ENABLE_OPENMP )
-   message(STATUS "Kokkos is using OpenMP and so am I")
+  message(STATUS "Kokkos is using OpenMP and so am I")
   find_package(OpenMP REQUIRED)
 endif()
 
@@ -75,7 +106,6 @@ mark_as_advanced(
     gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
 )
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/extern/kokkos" "extern/kokkos")
 
 add_subdirectory(lib)
 #Make tests here

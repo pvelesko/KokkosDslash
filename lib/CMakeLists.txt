@@ -18,6 +18,14 @@ add_library( libmg ${LIB_SRCS} )
 target_link_libraries( libmg  qdp)
 target_link_libraries( libmg )
 
+if (Kokkos_FOUND)
+  message(STATUS "limb using Kokkos found at ${Kokkos_ROOT}")
+  message(STATUS "Kokkos include ${Kokkos_INCLUDE}")
+  message(STATUS "Kokkos lib ${Kokkos_LIB}")
+else()
+  message(FATAL_ERROR "limb missing Kokkos")
+endif()
+
 if (Kokkos_ENABLE_OPENMP)
   message(STATUS "OpenMP Enabled in Kokkos, adding OpenMP as a link target")
   if(OpenMP_CXX_FOUND)
@@ -37,10 +45,12 @@ target_include_directories( libmg PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>
 	$<INSTALL_INTERFACE:include>)
 	
-target_include_directories(libmg PUBLIC "${Kokkos_SOURCE_DIR}/core/src")
-target_include_directories(libmg PUBLIC "${Kokkos_SOURCE_DIR}/containers/src")
-target_include_directories(libmg PUBLIC "${Kokkos_SOURCE_DIR}/algorithms/src")
-target_include_directories(libmg PUBLIC "${Kokkos_BINARY_DIR}")
+	
+target_include_directories(libmg PUBLIC "${Kokkos_INCLUDE}")
+#target_include_directories(libmg PUBLIC "${Kokkos_SOURCE_DIR}/core/src")
+#target_include_directories(libmg PUBLIC "${Kokkos_SOURCE_DIR}/containers/src")
+#target_include_directories(libmg PUBLIC "${Kokkos_SOURCE_DIR}/algorithms/src")
+#target_include_directories(libmg PUBLIC "${Kokkos_BINARY_DIR}")
 	
 
 
