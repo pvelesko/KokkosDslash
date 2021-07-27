@@ -40,6 +40,12 @@ using HostExec = Kokkos::Serial;
   using Layout = Kokkos::LayoutLeft;
   using GaugeLayout = Kokkos::LayoutLeft;
   using NeighLayout = Kokkos::LayoutLeft;
+#elif defined(MG_USE_SYCL)
+  using ExecSpace = Kokkos::Experimental::SYCL::execution_space;
+  using MemorySpace = Kokkos::Experimental::SYCL::SYCLSharedUSMSpace::memory_space;
+  using Layout = Kokkos::LayoutLeft;
+  using GaugeLayout = Kokkos::LayoutLeft;
+  using NeighLayout = Kokkos::LayoutLeft;
 #else
 
   using ExecSpace = Kokkos::OpenMP::execution_space;
