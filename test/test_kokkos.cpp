@@ -1148,7 +1148,7 @@ TEST(TestKokkos, TestDslashVec)
 		double norm_diff = toDouble(sqrt(norm2(psi_out[v],rb[cb])));
 		
 		MasterLog(INFO, "\t v=%d norm_diff = %lf", v,norm_diff);
-		ASSERT_LT( norm_diff, 1.0e-5);
+		ASSERT_LT( norm_diff, 2.5e-5);
 	      }
 	    }
 	  }
