@@ -10,7 +10,7 @@ include(GNUInstallDirs)
 include(CTest)
 include(CMakePackageConfigHelpers)
 
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ Standard to use 14+" FORCE)
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ Standard to use 14+" FORCE)
 message(STATUS "Set CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD}")
 set(CMAKE_CXX_EXTENSIONS CACHE BOOL OFF)
 
@@ -38,6 +38,10 @@ option(MG_USE_OPENMP "Use Kokkos::OpenMP execution space" OFF)
 option(MG_USE_OPENMPTARGET "Use Kokkos::Experimental::OpenMPTarget execution space" OFF)
 option(MG_USE_SYCL "Use Kokkos::Experimental::SYCL execution space" OFF)
 option(MG_USE_HIP "Use Kokkos::HIP execution space" OFF)
+
+if(MG_USE_CUDA)
+  add_compile_options(-Wno-error)
+endif()
 
 # Kokkos Options
 set (Kokkos_ROOT "" CACHE PATH "path to Kokkos install if you don't want to use the builtin submodule.")
